@@ -1,5 +1,6 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
+import closest from 'closest';
 
 interface IMouseProps {
     defaultBackgroundColor?: string;
@@ -46,7 +47,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         selectionWidth: 3,
         selectionHeight: 40,
         selectionRadius: 2,
-        hoverSelector: 'a *',
+        hoverSelector: 'a',
         transitionDuration: 200,
         blurRadius: 10,
         style: {},
@@ -112,9 +113,10 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
 
     handleMouseOver = (e: MouseEvent) => {
         const { target } = e;
-        if (this.state.hoverTarget !== target) {
-            if (target instanceof HTMLElement && target.matches(this.props.hoverSelector)) {
-                this.setState({ hoverTarget: target });
+        const hoverTarget = closest(target, this.props.hoverSelector, true);
+        if (this.state.hoverTarget !== hoverTarget) {
+            if (target instanceof HTMLElement && hoverTarget) {
+                this.setState({ hoverTarget });
             } else {
                 this.setState({ hoverTarget: null });
             }
