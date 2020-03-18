@@ -21,6 +21,7 @@ interface IMouseProps {
 }
 
 class IMouseState {
+    isTouch = false;
     isVisible = false;
     isActive = false;
     isSelection = false;
@@ -80,6 +81,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     componentDidMount() {
         IMouse.instance = this;
 
+        document.body.addEventListener('touchstart', this.handleTouchStart);
+        document.body.addEventListener('touchend', this.handleTouchEnd);
         document.body.addEventListener('mousemove', this.handleMouseMove);
         document.body.addEventListener('mouseover', this.handleMouseOver);
         document.body.addEventListener('mouseleave', this.handleMouseLeave);
@@ -91,6 +94,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     componentWillUnmount() {
         IMouse.instance = null;
         
+        document.body.removeEventListener('touchstart', this.handleTouchStart);
+        document.body.removeEventListener('touchend', this.handleTouchEnd);
         document.body.removeEventListener('mousemove', this.handleMouseMove);
         document.body.removeEventListener('mouseover', this.handleMouseOver);
         document.body.removeEventListener('mouseleave', this.handleMouseLeave);
@@ -99,12 +104,25 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         document.body.removeEventListener('dragstart', this.handleDragStart);
     }
 
+    handleTouchStart = () => {
+        this.setState({
+            isTouch: true
+        });
+    }
+
+    handleTouchEnd = () => {
+        this.setState({
+            isTouch: false,
+            isVisible: false,
+        });
+    }
+
     handleMouseMove = (e: MouseEvent) => {
         const { pageX, pageY } = e;
         const left = pageX - window.scrollX;
         const top = pageY - window.scrollY;
         this.setState({
-            isVisible: true,
+            isVisible: !this.state.isTouch,
             cursorLeft: left,
             cursorTop: top,
             isSelection: !document.getSelection().isCollapsed
