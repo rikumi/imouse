@@ -46,7 +46,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         selectionWidth: 3,
         selectionHeight: 40,
         selectionRadius: 2,
-        hoverSelector: 'a',
+        hoverSelector: 'a *',
         transitionDuration: 200,
         blurRadius: 10,
         style: {},
