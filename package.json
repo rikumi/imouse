@@ -1,0 +1,19 @@
+{
+  "name": "imouse",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "license": "MIT",
+  "source": "src/index.tsx",
+  "scripts": {
+    "build": "microbundle --jsx 'react'; rm -rf .rts2_*"
+  },
+  "dependencies": {
+    "react": "^16.13.0",
+    "react-dom": "^16.13.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.9.23",
+    "microbundle": "^0.11.0",
+    "typescript": "^3.8.3"
+  }
+}
