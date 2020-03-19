@@ -18,6 +18,7 @@ interface IMouseProps {
     transitionDuration?: number;
     blurRadius?: number;
     style?: React.CSSProperties;
+    zIndex?: number;
 }
 
 class IMouseState {
@@ -41,17 +42,18 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         activeBackgroundColor: 'rgba(0, 0, 0, .4)',
         defaultSize: 20,
         activeSize: 15,
-        hoverPadding: 10,
-        hoverRadius: 10,
-        activePadding: 5,
-        activeRadius: 5,
+        hoverPadding: 8,
+        hoverRadius: 8,
+        activePadding: 4,
+        activeRadius: 4,
         selectionWidth: 3,
         selectionHeight: 40,
         selectionRadius: 2,
         hoverSelector: 'a',
-        transitionDuration: 200,
+        transitionDuration: 250,
         blurRadius: 10,
         style: {},
+        zIndex: 10000,
     }
 
     static getMountpoint() {
@@ -111,10 +113,12 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     }
 
     handleTouchEnd = () => {
-        this.setState({
-            isTouch: false,
-            isVisible: false,
-        });
+        setTimeout(() => {
+            this.setState({
+                isTouch: false,
+                isVisible: false,
+            });
+        }, 0);
     }
 
     handleMouseMove = (e: MouseEvent) => {
@@ -160,67 +164,62 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         e.preventDefault();
     }
 
-    getStyles() {
+    getContainerStyles() {
+        const { zIndex } = this.props;
+        const { isVisible, cursorLeft, cursorTop } = this.state;
+
+        const styles: React.CSSProperties = {
+            position: 'fixed',
+            zIndex: zIndex,
+            pointerEvents: 'none',
+            opacity: isVisible ? 1 : 0,
+            left: cursorLeft + 'px',
+            top: cursorTop + 'px',
+            width: 0,
+            height: 0,
+        };
+
+        return styles;
+    }
+
+    getCursorStyles() {
         const {
             defaultBackgroundColor, activeBackgroundColor,
             defaultSize, activeSize,
             hoverPadding, activePadding,
             hoverRadius, activeRadius,
             selectionWidth, selectionHeight, selectionRadius,
-            transitionDuration, blurRadius,
-            style
+            transitionDuration, blurRadius, style
         } = this.props;
 
         const {
-            isVisible, isActive, isSelection, hoverTarget,
+            isActive, isSelection, hoverTarget,
             cursorLeft, cursorTop,
         } = this.state;
 
         const styles: React.CSSProperties = {
             ...style,
-            position: 'fixed',
-            cursor: 'none',
-            zIndex: 10000000,
-            pointerEvents: 'none',
-            opacity: isVisible ? 1 : 0,
+            position: 'absolute',
             backgroundColor: isActive ? activeBackgroundColor : defaultBackgroundColor,
-            transformOrigin: 'center',
             transitionDuration: transitionDuration + 'ms',
-            transitionProperty: 'width, height, transform, border-radius, background-color, backdrop-filter, -webkit-backdrop-filter',
+            transitionProperty: 'top, left, right, bottom, border-radius, background-color, backdrop-filter, -webkit-backdrop-filter, opacity',
         };
 
         if (hoverTarget) {
             const targetRect = hoverTarget.getBoundingClientRect();
             const padding = isActive ? activePadding : hoverPadding;
             const radius = isActive ? activeRadius : hoverRadius;
-            const centerX = targetRect.left + targetRect.width / 2;
-            const centerY = targetRect.top + targetRect.height / 2;
-            const width = targetRect.width + padding * 2;
-            const height = targetRect.height + padding * 2;
-            styles.left = cursorLeft + 'px';
-            styles.top = cursorTop + 'px';
-            styles.width = width + 'px';
-            styles.height = height + 'px';
-            styles.transform = `translate(${ centerX - cursorLeft - width / 2 }px,${ centerY - cursorTop - height / 2 }px)`;
+            styles.left = (targetRect.left - padding) - cursorLeft + 'px';
+            styles.top = (targetRect.top - padding) - cursorTop + 'px';
+            styles.right = cursorLeft - (targetRect.right + padding) + 'px';
+            styles.bottom = cursorTop - (targetRect.bottom + padding) + 'px';
             styles.borderRadius = radius + 'px';
-        } else if (isSelection) {
-            styles.left = cursorLeft + 'px';
-            styles.top = cursorTop + 'px';
-            styles.width = selectionWidth + 'px';
-            styles.height = selectionHeight + 'px';
-            styles.transform = `translate(${ -selectionWidth / 2 }px,${ -selectionHeight / 2 }px)`;
-            styles.borderRadius = selectionRadius + 'px';
-            styles.backdropFilter = `blur(${ blurRadius }px)`;
-            styles.WebkitBackdropFilter = `blur(${ blurRadius }px)`;
         } else {
-            const size = isActive ? activeSize : defaultSize;
-            const radius = size / 2;
-            styles.left = cursorLeft + 'px';
-            styles.top = cursorTop + 'px';
-            styles.width = size + 'px';
-            styles.height = size + 'px';
-            styles.transform = `translate(${ -radius }px,${ -radius }px)`;
-            styles.borderRadius = radius + 'px';
+            const width = isSelection ? selectionWidth : (isActive ? activeSize : defaultSize);
+            const height = isSelection ? selectionHeight : (isActive ? activeSize : defaultSize);
+            styles.left = styles.right = -width / 2;
+            styles.top = styles.bottom = -height / 2;
+            styles.borderRadius = (isSelection ? selectionRadius : defaultSize / 2) + 'px';
             styles.backdropFilter = `blur(${ blurRadius }px)`;
             styles.WebkitBackdropFilter = `blur(${ blurRadius }px)`;
         }
@@ -230,7 +229,9 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
 
     render() {
         return <>
-            <div style={this.getStyles()}></div>
+            <div style={this.getContainerStyles()}>
+                <div style={this.getCursorStyles()}></div>
+            </div>
             <style>{':root, * { cursor: none !important; }'}</style>
         </>
     }
