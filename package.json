@@ -4,7 +4,8 @@
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "parcel build src/index.tsx --global IMouse"
+    "build": "parcel build src/index.tsx --global IMouse",
+    "prepublishOnly": "npm run build"
   },
   "dependencies": {
     "closest": "^0.0.1",
