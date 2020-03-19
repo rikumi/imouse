@@ -5,13 +5,13 @@ import closest from 'closest';
 interface IMouseProps {
     /**
      * 非 hover 默认状态下的光标背景颜色，CSS 格式
-     * @default 'rgba(0, 0, 0, .2)'
+     * @default 'rgba(0, 0, 0, .1)'
      */
     defaultBackgroundColor?: string;
 
     /**
      * 非 hover 按下状态下的光标背景颜色，CSS 格式
-     * @default 'rgba(0, 0, 0, .4)'
+     * @default 'rgba(0, 0, 0, .2)'
      */
     activeBackgroundColor?: string;
 
@@ -124,8 +124,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     static MOUNTPOINT_CLASS = 'imouse-mountpoint';
 
     static defaultProps: IMouseProps = {
-        defaultBackgroundColor: 'rgba(0, 0, 0, .2)',
-        activeBackgroundColor: 'rgba(0, 0, 0, .4)',
+        defaultBackgroundColor: 'rgba(0, 0, 0, .1)',
+        activeBackgroundColor: 'rgba(0, 0, 0, .2)',
         defaultSize: 20,
         activeSize: 15,
         hoverPadding: 8,
