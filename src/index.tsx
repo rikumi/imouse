@@ -91,6 +91,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         document.body.addEventListener('mousedown', this.handleMouseDown);
         document.body.addEventListener('mouseup', this.handleMouseUp);
         document.body.addEventListener('dragstart', this.handleDragStart);
+        window.addEventListener('scroll', this.handleScroll);
     }
 
     componentWillUnmount() {
@@ -104,6 +105,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         document.body.removeEventListener('mousedown', this.handleMouseDown);
         document.body.removeEventListener('mouseup', this.handleMouseUp);
         document.body.removeEventListener('dragstart', this.handleDragStart);
+        window.removeEventListener('scroll', this.handleScroll);
     }
 
     handleTouchStart = () => {
@@ -165,6 +167,12 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
 
     handleDragStart = (e: MouseEvent) => {
         e.preventDefault();
+    }
+
+    handleScroll = () => {
+        this.setState({
+            hoverTarget: null
+        });
     }
 
     getContainerStyles() {
