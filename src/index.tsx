@@ -146,7 +146,10 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     }
 
     handleMouseLeave = () => {
-        this.setState({ isVisible: false });
+        this.setState({
+            isVisible: false,
+            isActive: false,
+        });
     }
 
     handleMouseDown = () => {
