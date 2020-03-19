@@ -3,22 +3,107 @@ import ReactDOM from 'react-dom';
 import closest from 'closest';
 
 interface IMouseProps {
+    /**
+     * 非 hover 默认状态下的光标背景颜色，CSS 格式
+     * @default 'rgba(0, 0, 0, .2)'
+     */
     defaultBackgroundColor?: string;
+
+    /**
+     * 非 hover 按下状态下的光标背景颜色，CSS 格式
+     * @default 'rgba(0, 0, 0, .4)'
+     */
     activeBackgroundColor?: string;
+
+    /**
+     * 非 hover 默认状态下的光标直径
+     * @default 20
+     */
     defaultSize?: number;
+
+    /**
+     * 非 hover 按下状态下的光标直径
+     * @default 15
+     */
     activeSize?: number;
+
+    /**
+     * hover 状态下的光标 padding 大小
+     * @default 8
+     */
     hoverPadding?: number;
+
+    /**
+     * hover 按下状态下的光标 padding 大小
+     * @default 4
+     */
     activePadding?: number;
+
+    /**
+     * hover 状态下的光标圆角半径
+     * @default 8
+     */
     hoverRadius?: number;
+
+    /**
+     * hover 按下状态下的光标圆角半径
+     * @default 4
+     */
     activeRadius?: number;
+
+    /**
+     * 文字选择状态下的光标宽度
+     * @default 3
+     */
     selectionWidth?: number;
+
+    /**
+     * 文字选择状态下的光标高度
+     * @default 40
+     */
     selectionHeight?: number;
+
+    /**
+     * 文字选择状态下的光标圆角半径
+     * @default 2
+     */
     selectionRadius?: number;
+
+    /**
+     * 允许 hover 的元素，CSS 选择器格式
+     * @default 'a'
+     */
     hoverSelector?: string;
+
+    /**
+     * 动效时长，单位 ms
+     * 较长的动效在切换 hover 态时比较平滑；较短的动效在大元素 hover 时甩动幅度小
+     * @default 120
+     */
     transitionDuration?: number;
+
+    /**
+     * 非 hover 状态下的光标毛玻璃半径
+     * @default 10
+     */
     blurRadius?: number;
+
+    /**
+     * hover 状态下的光标发光点半径
+     * @default 200
+     */
     glowRadius?: number;
+
+    /**
+     * 光标的附加样式
+     * @default {}
+     */
     style?: React.CSSProperties;
+
+    /**
+     * Z 轴层级
+     * @default 10000
+     */
     zIndex?: number;
 }
 
@@ -250,7 +335,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         } = this.props;
 
         const {
-            isActive, isSelection, hoverTarget,
+            isActive, hoverTarget,
             cursorLeft, cursorTop,
         } = this.state;
 
