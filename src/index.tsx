@@ -17,6 +17,7 @@ interface IMouseProps {
     hoverSelector?: string;
     transitionDuration?: number;
     blurRadius?: number;
+    glowRadius?: number;
     style?: React.CSSProperties;
     zIndex?: number;
 }
@@ -50,8 +51,9 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         selectionHeight: 40,
         selectionRadius: 2,
         hoverSelector: 'a',
-        transitionDuration: 250,
+        transitionDuration: 120,
         blurRadius: 10,
+        glowRadius: 200,
         style: {},
         zIndex: 10000,
     }
@@ -211,6 +213,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         const styles: React.CSSProperties = {
             ...style,
             position: 'absolute',
+            overflow: 'hidden',
             backgroundColor: isActive ? activeBackgroundColor : defaultBackgroundColor,
             transitionDuration: transitionDuration + 'ms',
             transitionProperty: 'top, left, right, bottom, border-radius, background-color, backdrop-filter, -webkit-backdrop-filter, opacity',
@@ -238,10 +241,51 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         return styles;
     }
 
+    getCursorGlowStyles() {
+        const {
+            defaultBackgroundColor,
+            hoverPadding, activePadding,
+            hoverRadius, activeRadius,
+            transitionDuration, glowRadius,
+        } = this.props;
+
+        const {
+            isActive, isSelection, hoverTarget,
+            cursorLeft, cursorTop,
+        } = this.state;
+
+        const styles: React.CSSProperties = {
+            position: 'absolute',
+            transitionDuration: transitionDuration + 'ms',
+            transitionProperty: 'all',
+        };
+
+        if (hoverTarget) {
+            const targetRect = hoverTarget.getBoundingClientRect();
+            const padding = isActive ? activePadding : hoverPadding;
+            const radius = isActive ? activeRadius : hoverRadius;
+            styles.left = cursorLeft - (targetRect.left - padding) - glowRadius + 'px';
+            styles.top = cursorTop - (targetRect.top - padding) - glowRadius + 'px';
+            styles.right = (targetRect.right + padding) - cursorLeft - glowRadius + 'px';
+            styles.bottom = (targetRect.bottom + padding) - cursorTop - glowRadius + 'px';
+            styles.borderRadius = radius * 2 + 'px';
+            styles.backgroundImage = `radial-gradient(${ defaultBackgroundColor } 0%, transparent 50%)`;
+        } else {
+            styles.left = 0;
+            styles.top = 0;
+            styles.right = 0;
+            styles.bottom = 0;
+        }
+
+        return styles;
+    }
+
     render() {
         return <>
-            <div style={this.getContainerStyles()}>
-                <div style={this.getCursorStyles()}></div>
+            <div className="imouse-container" style={this.getContainerStyles()}>
+                <div className="imouse-cursor" style={this.getCursorStyles()}>
+                    <div className="imouse-glow" style={this.getCursorGlowStyles()}></div>
+                </div>
             </div>
             <style>{':root, * { cursor: none !important; }'}</style>
         </>
