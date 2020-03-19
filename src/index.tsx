@@ -71,7 +71,7 @@ interface IMouseProps {
 
     /**
      * 允许 hover 的元素，CSS 选择器格式
-     * @default 'a'
+     * @default 'a, button, input'
      */
     hoverSelector?: string;
 
@@ -135,7 +135,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         selectionWidth: 3,
         selectionHeight: 40,
         selectionRadius: 2,
-        hoverSelector: 'a',
+        hoverSelector: 'a, button, input',
         transitionDuration: 120,
         blurRadius: 10,
         glowRadius: 200,
