@@ -71,9 +71,9 @@ IMouse.init(options);
 | selectionWidth | number | `3` | 文字选择状态下的光标宽度 |
 | selectionHeight | number | `40` | 文字选择状态下的光标高度 |
 | selectionRadius | number | `2` | 文字选择状态下的光标圆角半径 |
-| hoverSelector | string | `'a, button, input[type="button"], input[type="checkbox"], input[type="radio"], input[type="file"], input[type="submit"]'` | 允许 hover 的元素，CSS 选择器格式 |
+| hoverSelector | string | `'a, button, `<br/>`input[type="button"], `<br/>`input[type="checkbox"], `<br/>`input[type="radio"], `<br/>`input[type="file"], `<br/>`input[type="submit"]'` | 允许 hover 的元素，CSS 选择器格式 |
 | normalTransitionDuration | number | `200` | 非 hover 状态下的动效时长，单位 ms |
-| hoverTransitionDuration | number | `50` | 值越大，甩动光标时发生的抖动越强烈 |
+| hoverTransitionDuration | number | `50` | hover 状态下的动效时长，单位 ms；值越大，甩动光标时发生的抖动越强烈 |
 | blurRadius | number | `10` | 非 hover 状态下的光标毛玻璃半径 |
 | glowRadius | number | `200` | hover 状态下的光标发光点半径 |
 | style | React.CSSProperties | `{}` | 光标的附加样式 |
