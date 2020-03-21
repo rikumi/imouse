@@ -76,10 +76,17 @@ interface IMouseProps {
     hoverSelector?: string;
 
     /**
-     * 动效时长，单位 ms
-     * @default 120
+     * 非 hover 状态下的动效时长，单位 ms
+     * @default 200
      */
-    transitionDuration?: number;
+    normalTransitionDuration?: number;
+
+    /**
+     * hover 状态下的动效时长，单位 ms
+     * 值越大，甩动光标时发生的抖动越强烈
+     * @default 50
+     */
+    hoverTransitionDuration?: number;
 
     /**
      * 非 hover 状态下的光标毛玻璃半径
@@ -104,14 +111,6 @@ interface IMouseProps {
      * @default 10000
      */
     zIndex?: number;
-
-    /**
-     * 是否使用稳定 hover
-     * - 稳定 hover 下，在 hover 元素内甩动鼠标不会使 hover 框发生抖动，但动画可能显得僵硬，适合有大型 hover 元素的页面
-     * - 非稳定 hover 下，在 hover 元素内甩动鼠标，hover 框会随鼠标抖动，适合没有大型 hover 元素的页面
-     * @default false
-     */
-    useSteadyHover?: boolean;
 }
 
 class IMouseState {
@@ -144,12 +143,12 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         selectionHeight: 40,
         selectionRadius: 2,
         hoverSelector: 'a, button, input[type="button"], input[type="checkbox"], input[type="radio"], input[type="file"], input[type="submit"]',
-        transitionDuration: 120,
+        normalTransitionDuration: 200,
+        hoverTransitionDuration: 50,
         blurRadius: 10,
         glowRadius: 200,
         style: {},
         zIndex: 10000,
-        useSteadyHover: false,
     }
 
     static getMountpoint() {
@@ -250,7 +249,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
                 this.setSteadyHoverTimeout = setTimeout(() => {
                     this.setState({ isSteadyHover: true });
                     this.setSteadyHoverTimeout = null;
-                }, this.props.transitionDuration);
+                }, this.props.normalTransitionDuration);
             } else {
                 this.setState({ hoverTarget: null });
             }
@@ -310,8 +309,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             hoverPadding, activePadding,
             hoverRadius, activeRadius,
             selectionWidth, selectionHeight, selectionRadius,
-            transitionDuration, blurRadius, style,
-            useSteadyHover,
+            normalTransitionDuration, hoverTransitionDuration,
+            blurRadius, style,
         } = this.props;
 
         const {
@@ -324,7 +323,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             position: 'absolute',
             overflow: 'hidden',
             backgroundColor: isActive ? activeBackgroundColor : defaultBackgroundColor,
-            transitionDuration: (useSteadyHover && isSteadyHover ? 0 : transitionDuration) + 'ms',
+            transitionDuration: (isSteadyHover ? hoverTransitionDuration : normalTransitionDuration) + 'ms',
             transitionProperty: 'top, left, right, bottom, border-radius, background-color, backdrop-filter, -webkit-backdrop-filter, opacity',
         };
 
@@ -355,8 +354,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             defaultBackgroundColor,
             hoverPadding, activePadding,
             hoverRadius, activeRadius,
-            transitionDuration, glowRadius,
-            useSteadyHover,
+            normalTransitionDuration, hoverTransitionDuration,
+            glowRadius,
         } = this.props;
 
         const {
@@ -366,7 +365,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
 
         const styles: React.CSSProperties = {
             position: 'absolute',
-            transitionDuration: (useSteadyHover && isSteadyHover ? 0 : transitionDuration) + 'ms',
+            transitionDuration: (isSteadyHover ? hoverTransitionDuration : normalTransitionDuration) + 'ms',
             transitionProperty: 'all',
         };
 
