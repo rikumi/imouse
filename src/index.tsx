@@ -302,7 +302,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         return styles;
     }
 
-    getCursorStyles() {
+    getCursorStyles(clientRect: ClientRect) {
         const {
             defaultBackgroundColor, activeBackgroundColor,
             defaultSize, activeSize,
@@ -328,7 +328,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         };
 
         if (hoverTarget) {
-            const targetRect = hoverTarget.getBoundingClientRect();
+            const targetRect = clientRect;
             const padding = isActive ? activePadding : hoverPadding;
             const radius = isActive ? activeRadius : hoverRadius;
             styles.left = (targetRect.left - padding) - cursorLeft + 'px';
@@ -349,7 +349,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         return styles;
     }
 
-    getCursorGlowStyles() {
+    getCursorGlowStyles(clientRect: ClientRect) {
         const {
             defaultBackgroundColor,
             hoverPadding, activePadding,
@@ -370,7 +370,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         };
 
         if (hoverTarget) {
-            const targetRect = hoverTarget.getBoundingClientRect();
+            const targetRect = clientRect;
             const padding = isActive ? activePadding : hoverPadding;
             const radius = isActive ? activeRadius : hoverRadius;
             styles.left = cursorLeft - (targetRect.left - padding) - glowRadius + 'px';
@@ -390,11 +390,13 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
     }
 
     render() {
+        const { hoverTarget } = this.state;
+        const clientRects = hoverTarget ? [...hoverTarget.getClientRects()] : [null];
         return <>
             <div className="imouse-container" style={this.getContainerStyles()}>
-                <div className="imouse-cursor" style={this.getCursorStyles()}>
-                    <div className="imouse-glow" style={this.getCursorGlowStyles()}></div>
-                </div>
+                {clientRects.map((rect, i) => <div className="imouse-cursor" style={this.getCursorStyles(rect)} key={clientRects.length + ',' + i}>
+                    <div className="imouse-glow" style={this.getCursorGlowStyles(rect)}></div>
+                </div>)}
             </div>
             <style>{':root, * { cursor: none !important; }'}</style>
         </>
