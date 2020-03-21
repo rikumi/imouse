@@ -78,6 +78,6 @@ IMouse.init(options);
 | style | React.CSSProperties | `{}` | 光标的附加样式 |
 | zIndex | number | `10000` | Z 轴层级 |
 
-## `IMouse#destroy()`
+### `IMouse#destroy()`
 
 销毁 IMouse 实例并恢复原始鼠标指针。
