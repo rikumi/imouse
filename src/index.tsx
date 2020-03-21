@@ -77,7 +77,6 @@ interface IMouseProps {
 
     /**
      * 动效时长，单位 ms
-     * 较长的动效在切换 hover 态时比较平滑；较短的动效在大元素 hover 时甩动幅度小
      * @default 120
      */
     transitionDuration?: number;
@@ -105,6 +104,14 @@ interface IMouseProps {
      * @default 10000
      */
     zIndex?: number;
+
+    /**
+     * 是否使用稳定 hover
+     * - 稳定 hover 下，在 hover 元素内甩动鼠标不会使 hover 框发生抖动，但动画可能显得僵硬，适合有大型 hover 元素的页面
+     * - 非稳定 hover 下，在 hover 元素内甩动鼠标，hover 框会随鼠标抖动，适合没有大型 hover 元素的页面
+     * @default false
+     */
+    useSteadyHover?: boolean;
 }
 
 class IMouseState {
@@ -112,6 +119,7 @@ class IMouseState {
     isVisible = false;
     isActive = false;
     isSelection = false;
+    isSteadyHover = false;
     hoverTarget: HTMLElement;
     cursorLeft = 0;
     cursorTop = 0;
@@ -141,6 +149,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         glowRadius: 200,
         style: {},
         zIndex: 10000,
+        useSteadyHover: false,
     }
 
     static getMountpoint() {
@@ -161,6 +170,8 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             ReactDOM.render(<IMouse {...props} ref={resolve} />, this.getMountpoint())
         });
     }
+
+    setSteadyHoverTimeout: number = null;
 
     constructor(props: IMouseProps) {
         super(props);
@@ -226,8 +237,20 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
         const { target } = e;
         const hoverTarget = closest(target, this.props.hoverSelector, true);
         if (this.state.hoverTarget !== hoverTarget) {
+            if (this.setSteadyHoverTimeout) {
+                clearTimeout(this.setSteadyHoverTimeout);
+                this.setSteadyHoverTimeout = null;
+            }
+
+            this.setState({ isSteadyHover: false });
+
             if (target instanceof HTMLElement && hoverTarget) {
                 this.setState({ hoverTarget });
+
+                this.setSteadyHoverTimeout = setTimeout(() => {
+                    this.setState({ isSteadyHover: true });
+                    this.setSteadyHoverTimeout = null;
+                }, this.props.transitionDuration);
             } else {
                 this.setState({ hoverTarget: null });
             }
@@ -287,11 +310,12 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             hoverPadding, activePadding,
             hoverRadius, activeRadius,
             selectionWidth, selectionHeight, selectionRadius,
-            transitionDuration, blurRadius, style
+            transitionDuration, blurRadius, style,
+            useSteadyHover,
         } = this.props;
 
         const {
-            isActive, isSelection, hoverTarget,
+            isActive, isSelection, hoverTarget, isSteadyHover,
             cursorLeft, cursorTop,
         } = this.state;
 
@@ -300,7 +324,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             position: 'absolute',
             overflow: 'hidden',
             backgroundColor: isActive ? activeBackgroundColor : defaultBackgroundColor,
-            transitionDuration: transitionDuration + 'ms',
+            transitionDuration: (useSteadyHover && isSteadyHover ? 0 : transitionDuration) + 'ms',
             transitionProperty: 'top, left, right, bottom, border-radius, background-color, backdrop-filter, -webkit-backdrop-filter, opacity',
         };
 
@@ -332,16 +356,17 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
             hoverPadding, activePadding,
             hoverRadius, activeRadius,
             transitionDuration, glowRadius,
+            useSteadyHover,
         } = this.props;
 
         const {
-            isActive, hoverTarget,
+            isActive, hoverTarget, isSteadyHover,
             cursorLeft, cursorTop,
         } = this.state;
 
         const styles: React.CSSProperties = {
             position: 'absolute',
-            transitionDuration: transitionDuration + 'ms',
+            transitionDuration: (useSteadyHover && isSteadyHover ? 0 : transitionDuration) + 'ms',
             transitionProperty: 'all',
         };
 
