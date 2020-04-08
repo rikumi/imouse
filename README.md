@@ -14,7 +14,7 @@ IMouse 是一个 Web 前端小插件，只需动动手指，就能在你的页�
 
 ## 在线体验
 
-[https://rikumi.github.io/](https://rikumi.github.io/)
+~~https://rikumi.github.io/~~
 
 ## 已实现功能
 
