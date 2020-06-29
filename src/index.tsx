@@ -1,6 +1,5 @@
 import * as React from 'react';
 import ReactDOM from 'react-dom';
-import closest from 'closest';
 
 interface IMouseProps {
     /**
@@ -234,7 +233,7 @@ export default class IMouse extends React.Component<IMouseProps, IMouseState> {
 
     handleMouseOver = (e: MouseEvent) => {
         const { target } = e;
-        const hoverTarget = closest(target, this.props.hoverSelector, true);
+        const hoverTarget = target.closest(this.props.hoverSelector);
         if (this.state.hoverTarget !== hoverTarget) {
             if (this.setSteadyHoverTimeout) {
                 clearTimeout(this.setSteadyHoverTimeout);
